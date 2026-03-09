@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Latihan TKP SKD - Paket 1</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: Arial, sans-serif; background: #f0f4f9; padding: 16px; }
+.container { max-width: 720px; margin: 0 auto; }
+
+#startScreen { display: flex; justify-content: center; align-items: center; min-height: 90vh; }
+.start-box { background: white; border-radius: 16px; padding: 36px 24px; text-align: center; max-width: 360px; width: 100%; box-shadow: 0 4px 20px rgba(0,0,0,0.12); border-top: 8px solid #1a73e8; }
+.start-box h2 { font-size: 22px; color: #202124; margin-bottom: 8px; }
+.start-sub { font-size: 14px; color: #5f6368; margin-bottom: 18px; }
+.info-box { background: #f1f3f4; border-radius: 10px; padding: 14px; margin: 0 0 16px; text-align: left; font-size: 13px; color: #3c4043; line-height: 2.2; }
+.warn { font-size: 12px; color: #c5221f; margin-bottom: 18px; }
+.btn-start { background: #1a73e8; color: white; border: none; padding: 15px; border-radius: 10px; font-size: 16px; font-weight: 700; cursor: pointer; width: 100%; }
+
+#mainContent { display: none; }
+
+.sticky-bar { position: -webkit-sticky; position: sticky; top: 0; z-index: 100; background: white; padding: 10px 14px; border-radius: 0 0 10px 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 14px; }
+.bar-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.prog-txt { font-size: 12px; color: #5f6368; }
+.timer { display: flex; align-items: center; gap: 5px; padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 700; }
+.t-blue { background: #e8f0fe; color: #1a73e8; }
+.t-orange { background: #fff3e0; color: #e65100; }
+.t-red { background: #fce8e6; color: #c5221f; }
+.timer-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.prog-track { background: #e8eaed; border-radius: 6px; height: 6px; }
+.prog-fill { background: #1a73e8; height: 6px; border-radius: 6px; width: 0%; }
+
+.header-card { background: white; border-radius: 12px; padding: 18px 20px; margin-bottom: 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); border-top: 8px solid #1a73e8; }
+.header-card h1 { font-size: 18px; color: #202124; margin-bottom: 6px; }
+.header-card p { font-size: 13px; color: #5f6368; line-height: 1.6; }
+.badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.bdg { background: #e8f0fe; color: #1a73e8; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+
+.sec { background: white; border-radius: 10px; padding: 11px 18px; margin: 16px 0 8px; border-left: 5px solid #1a73e8; box-shadow: 0 1px 4px rgba(0,0,0,0.07); }
+.sec h2 { font-size: 13px; color: #1a73e8; font-weight: 700; }
+
+.qcard { background: white; border-radius: 10px; padding: 16px 18px; margin-bottom: 9px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); }
+.qcard.err { border-left: 4px solid #ea4335; }
+.qmeta { display: flex; align-items: center; gap: 7px; margin-bottom: 10px; flex-wrap: wrap; }
+.qnum { background: #1a73e8; color: white; font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 20px; }
+.qmat { background: #fff3e0; color: #e65100; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
+.skbdg { display: none; margin-left: auto; font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 10px; color: white; }
+.skbdg.on { display: inline-block; }
+.sk5 { background: #34a853; }
+.sk4 { background: #1a73e8; }
+.sk3 { background: #f9ab00; color: #333; }
+.sk2 { background: #ff7043; }
+.sk1 { background: #ea4335; }
+
+.qtxt { font-size: 13px; color: #202124; line-height: 1.7; margin-bottom: 12px; }
+.opts { display: flex; flex-direction: column; gap: 7px; }
+.opt { display: flex; align-items: flex-start; gap: 9px; padding: 9px 11px; border-radius: 7px; border: 1px solid #dadce0; cursor: pointer; font-size: 13px; color: #3c4043; line-height: 1.5; -webkit-tap-highlight-color: transparent; }
+.opt input { margin-top: 2px; flex-shrink: 0; }
+.opt.sel { background: #e8f0fe; border-color: #1a73e8; color: #1a73e8; font-weight: 600; }
+.opt.ok { background: #e6f4ea; border-color: #34a853; color: #137333; font-weight: 600; }
+.opt.no { background: #fce8e6; border-color: #ea4335; color: #c5221f; }
+
+.submit-area { text-align: center; padding: 20px 0 40px; }
+.btn-sub { background: #1a73e8; color: white; border: none; padding: 14px 40px; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; }
+.alrt { background: #fce8e6; color: #c5221f; padding: 11px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 12px; display: none; }
+.alrt.on { display: block; }
+
+.res { display: none; background: white; border-radius: 12px; padding: 26px 20px; text-align: center; margin-bottom: 18px; box-shadow: 0 4px 14px rgba(0,0,0,0.1); }
+.res.on { display: block; }
+.res-score { font-size: 52px; font-weight: 700; color: #1a73e8; }
+.res-max { font-size: 15px; color: #5f6368; }
+.res-label { font-size: 16px; font-weight: 700; color: #202124; margin: 8px 0; }
+.res-sub { font-size: 13px; color: #5f6368; margin-bottom: 14px; }
+.res-table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; margin: 12px 0; }
+.res-table th { background: #f1f3f4; color: #5f6368; padding: 7px 10px; font-weight: 700; }
+.res-table td { padding: 7px 10px; border-bottom: 1px solid #f1f3f4; }
+.pill { background: #e8f0fe; color: #1a73e8; padding: 2px 8px; border-radius: 10px; font-weight: 700; }
+.btn-rev { background: #34a853; color: white; border: none; padding: 11px 24px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; margin: 5px 3px; }
+.btn-rst { background: #f1f3f4; color: #3c4043; border: none; padding: 11px 24px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; margin: 5px 3px; }
+
+.overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 999; }
+.overlay.on { display: flex; justify-content: center; align-items: center; }
+.ov-box { background: white; border-radius: 14px; padding: 30px 24px; text-align: center; max-width: 320px; width: 88%; }
+.ov-box h2 { font-size: 20px; color: #c5221f; margin-bottom: 10px; }
+.ov-box p { font-size: 13px; color: #5f6368; margin-bottom: 18px; line-height: 1.6; }
+.btn-ov { background: #1a73e8; color: white; border: none; padding: 13px; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; width: 100%; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="overlay" id="overlay">
+  <div class="ov-box">
+    <h2>Waktu Habis!</h2>
+    <p>20 menit telah berlalu. Jawaban yang sudah diisi tetap tersimpan dan langsung dihitung skornya.</p>
+    <button class="btn-ov" id="btnOv">Lihat Hasil Skor</button>
+  </div>
+</div>
+
+<div id="startScreen">
+  <div class="start-box">
+    <div style="font-size:48px;margin-bottom:12px;">&#128203;</div>
+    <h2>Latihan TKP SKD</h2>
+    <p class="start-sub">Paket 1 &mdash; Dengan Narasi Soal</p>
+    <div class="info-box">
+      &#128203; 45 Soal &mdash; 6 Bagian Materi<br>
+      &#9201; Waktu: <strong>20 Menit</strong><br>
+      &#127919; Skor Maksimal: <strong>225 Poin</strong><br>
+      &#128247; Bisa di HP dan laptop
+    </div>
+    <p class="warn">&#9888; Timer langsung berjalan saat Mulai!</p>
+    <button class="btn-start" id="btnMulai">Mulai Latihan &#9654;</button>
+  </div>
+</div>
+
+<div id="mainContent">
+  <div class="sticky-bar">
+    <div class="bar-row">
+      <span class="prog-txt" id="progTxt">0 / 45 dijawab</span>
+      <div class="timer t-blue" id="timerBox">
+        <div class="timer-dot"></div>
+        <span id="timerTxt">20:00</span>
+      </div>
+    </div>
+    <div class="prog-track"><div class="prog-fill" id="progFill"></div></div>
+  </div>
+
+  <div class="header-card">
+    <h1>&#128203; Latihan TKP SKD &mdash; Paket 1</h1>
+    <p>Baca setiap soal dengan seksama lalu pilih jawaban terbaik. Skor dihitung otomatis setelah selesai.</p>
+    <div class="badges">
+      <span class="bdg">45 Soal</span>
+      <span class="bdg">Skor 1-5</span>
+      <span class="bdg">Max 225</span>
+      <span class="bdg">20 Menit</span>
+    </div>
+  </div>
+
+  <div class="res" id="resPanel">
+    <div class="res-score" id="resScore">0</div>
+    <div class="res-max">dari 225 poin</div>
+    <div class="res-label" id="resLabel"></div>
+    <div class="res-sub" id="resSub"></div>
+    <table class="res-table" id="resTable"></table>
+    <div style="margin-top:12px;">
+      <button class="btn-rev" id="btnRev">&#128269; Lihat Jawaban Benar</button>
+      <button class="btn-rst" id="btnRst">&#128260; Ulangi</button>
+    </div>
+  </div>
+
+  <div class="alrt" id="alrt"></div>
+
+  <div id="formBody">
+<div class="sec"><h2>BAGIAN 1: PELAYANAN PUBLIK</h2></div>
+<div class="qcard" id="q1">
+<div class="qmeta"><span class="qnum">Soal 1</span><span class="qmat">Pelayanan Publik</span><span class="skbdg" id="sb1"></span></div>
+<div class="qtxt">Anda baru saja dilantik menjadi kepala puskesmas yang baru. Pada hari pertama bekerja Anda mendapat keluhan fasilitas kesehatan yang tidak memadai dan sisa anggaran kecil. Tindakan Anda...</div>
+<div class="opts">
+<label class="opt" id="o1_0"><input type="radio" name="q1" value="0" onchange="onAns(1,0)"><span><strong>A.</strong> Anda mencari dukungan dari pemerintah untuk mendapatkan anggaran puskesmas</span></label>
+<label class="opt" id="o1_1"><input type="radio" name="q1" value="1" onchange="onAns(1,1)"><span><strong>B.</strong> Anda memanfaatkan dana yang ada untuk meningkatkan fasilitas dengan inovasi sederhana</span></label>
+<label class="opt" id="o1_2"><input type="radio" name="q1" value="2" onchange="onAns(1,2)"><span><strong>C.</strong> Anda mengadakan penggalangan dana dari masyarakat untuk membantu meningkatkan fasilitas</span></label>
+<label class="opt" id="o1_3"><input type="radio" name="q1" value="3" onchange="onAns(1,3)"><span><strong>D.</strong> Anda memotong operasional lain agar dana dapat dialokasikan ke fasilitas kesehatan</span></label>
+<label class="opt" id="o1_4"><input type="radio" name="q1" value="4" onchange="onAns(1,4)"><span><strong>E.</strong> Anda menunggu inisiatif pemerintah untuk memberikan anggaran dana ke puskesmas</span></label>
+</div>
+</div>
+<div class="qcard" id="q2">
+<div class="qmeta"><span class="qnum">Soal 2</span><span class="qmat">Pelayanan Publik</span><span class="skbdg" id="sb2"></span></div>
+<div class="qtxt">Riska ingin memahami kebutuhan dan preferensi penggunaan web pelayanan. Tindakan tepat yang dapat dilakukan adalah...</div>
+<div class="opts">
+<label class="opt" id="o2_0"><input type="radio" name="q2" value="0" onchange="onAns(2,0)"><span><strong>A.</strong> Riska mengadakan data survei lama yang pernah dilakukan perusahaan web</span></label>
+<label class="opt" id="o2_1"><input type="radio" name="q2" value="1" onchange="onAns(2,1)"><span><strong>B.</strong> Riska mengadakan diskusi internal dengan tim pengembang web pelayanan</span></label>
+<label class="opt" id="o2_2"><input type="radio" name="q2" value="2" onchange="onAns(2,2)"><span><strong>C.</strong> Riska mengirim survei kepuasan pelanggan untuk evaluasi web pelayanan</span></label>
+<label class="opt" id="o2_3"><input type="radio" name="q2" value="3" onchange="onAns(2,3)"><span><strong>D.</strong> Riska melakukan analisis kompetitor untuk mengetahui tren fitur web pelayanan</span></label>
+<label class="opt" id="o2_4"><input type="radio" name="q2" value="4" onchange="onAns(2,4)"><span><strong>E.</strong> Riska menyusun kesimpulan mandiri berdasarkan teori tren terkini</span></label>
+</div>
+</div>
+<div class="qcard" id="q3">
+<div class="qmeta"><span class="qnum">Soal 3</span><span class="qmat">Pelayanan Publik</span><span class="skbdg" id="sb3"></span></div>
+<div class="qtxt">Damar adalah petugas panitia KPU. Ia dihadapkan dengan dua calon yang melakukan SARA. Sikap Damar...</div>
+<div class="opts">
+<label class="opt" id="o3_0"><input type="radio" name="q3" value="0" onchange="onAns(3,0)"><span><strong>A.</strong> Damar membuat sosialisasi positif untuk meredam pengaruh negatif</span></label>
+<label class="opt" id="o3_1"><input type="radio" name="q3" value="1" onchange="onAns(3,1)"><span><strong>B.</strong> Damar menjaga netralitas dengan tidak mengambil tindakan apapun</span></label>
+<label class="opt" id="o3_2"><input type="radio" name="q3" value="2" onchange="onAns(3,2)"><span><strong>C.</strong> Damar menegakkan keadilan secara tegas dan melaporkan</span></label>
+<label class="opt" id="o3_3"><input type="radio" name="q3" value="3" onchange="onAns(3,3)"><span><strong>D.</strong> Damar mengabaikan calon tersebut karena dia memiliki hak suara</span></label>
+<label class="opt" id="o3_4"><input type="radio" name="q3" value="4" onchange="onAns(3,4)"><span><strong>E.</strong> Damar berperan sebagai fasilitator mediasi untuk mengingatkan calon</span></label>
+</div>
+</div>
+<div class="qcard" id="q4">
+<div class="qmeta"><span class="qnum">Soal 4</span><span class="qmat">Pelayanan Publik</span><span class="skbdg" id="sb4"></span></div>
+<div class="qtxt">Anda bekerja pada sebuah perusahaan jasa layanan dan tiba-tiba harus dipindahkan ke bagian customer service. Sikap Anda...</div>
+<div class="opts">
+<label class="opt" id="o4_0"><input type="radio" name="q4" value="0" onchange="onAns(4,0)"><span><strong>A.</strong> Saya tetap mempersuasi perusahaan agar tetap pada posisi saat ini karena tidak bisa melayani</span></label>
+<label class="opt" id="o4_1"><input type="radio" name="q4" value="1" onchange="onAns(4,1)"><span><strong>B.</strong> Saya tetap menerima ditempatkan pada bagian CS karena keharusan</span></label>
+<label class="opt" id="o4_2"><input type="radio" name="q4" value="2" onchange="onAns(4,2)"><span><strong>C.</strong> Saya tetap menerima kondisi sebagai wujud loyalitas dalam bekerja dan melayani</span></label>
+<label class="opt" id="o4_3"><input type="radio" name="q4" value="3" onchange="onAns(4,3)"><span><strong>D.</strong> Saya tetap menjalankan tugas yang diberikan sebagai bentuk tanggung jawab</span></label>
+<label class="opt" id="o4_4"><input type="radio" name="q4" value="4" onchange="onAns(4,4)"><span><strong>E.</strong> Saya tetap menerima dengan hati yang lapang atas pemindahan sebagai CS</span></label>
+</div>
+</div>
+<div class="qcard" id="q5">
+<div class="qmeta"><span class="qnum">Soal 5</span><span class="qmat">Pelayanan Publik</span><span class="skbdg" id="sb5"></span></div>
+<div class="qtxt">Seorang gubernur membuat sistem pengaduan keluhan masyarakat dengan memaksimalkan sumber daya. Tindakan yang harus dilakukan adalah...</div>
+<div class="opts">
+<label class="opt" id="o5_0"><input type="radio" name="q5" value="0" onchange="onAns(5,0)"><span><strong>A.</strong> Gubernur harus mencari tim yang sesuai dengan kepakaran sistem pengaduan</span></label>
+<label class="opt" id="o5_1"><input type="radio" name="q5" value="1" onchange="onAns(5,1)"><span><strong>B.</strong> Gubernur harus melakukan evaluasi terlebih dahulu baru dapat melaksanakan</span></label>
+<label class="opt" id="o5_2"><input type="radio" name="q5" value="2" onchange="onAns(5,2)"><span><strong>C.</strong> Gubernur memberikan survei dan menyesuaikan kebutuhan dengan pendapat survei</span></label>
+<label class="opt" id="o5_3"><input type="radio" name="q5" value="3" onchange="onAns(5,3)"><span><strong>D.</strong> Gubernur memberikan pelatihan kepada seluruh staf agar bisa membuat sistem yang tepat</span></label>
+<label class="opt" id="o5_4"><input type="radio" name="q5" value="4" onchange="onAns(5,4)"><span><strong>E.</strong> Gubernur menjalankan tugas sesuai dengan tupoksi pekerjaan agar berjalan dengan baik</span></label>
+</div>
+</div>
+<div class="qcard" id="q6">
+<div class="qmeta"><span class="qnum">Soal 6</span><span class="qmat">Pelayanan Publik</span><span class="skbdg" id="sb6"></span></div>
+<div class="qtxt">Budi adalah kepala lingkungan baru. Hari ini Ia berjanji melakukan syukuran dengan keluarganya. Tiba-tiba ada warga yang datang membutuhkan tanda tangan pada surat penting. Sikap Budi...</div>
+<div class="opts">
+<label class="opt" id="o6_0"><input type="radio" name="q6" value="0" onchange="onAns(6,0)"><span><strong>A.</strong> Menemui warga dan bertanya terkait dengan keperluannya</span></label>
+<label class="opt" id="o6_1"><input type="radio" name="q6" value="1" onchange="onAns(6,1)"><span><strong>B.</strong> Menemui warga dengan meminta izin untuk menunggu sebentar</span></label>
+<label class="opt" id="o6_2"><input type="radio" name="q6" value="2" onchange="onAns(6,2)"><span><strong>C.</strong> Menemui warga dan menawarkan bantuan yang diperlukan</span></label>
+<label class="opt" id="o6_3"><input type="radio" name="q6" value="3" onchange="onAns(6,3)"><span><strong>D.</strong> Menemui warga dan menyarankan agar tanda tangan bisa di esok hari</span></label>
+<label class="opt" id="o6_4"><input type="radio" name="q6" value="4" onchange="onAns(6,4)"><span><strong>E.</strong> Menemui warga dan meminta pulpen untuk menandatangani surat</span></label>
+</div>
+</div>
+<div class="qcard" id="q7">
+<div class="qmeta"><span class="qnum">Soal 7</span><span class="qmat">Pelayanan Publik</span><span class="skbdg" id="sb7"></span></div>
+<div class="qtxt">Jadwal cuti yang sudah disetujui dari 2 minggu lalu tiba-tiba saja dibatalkan oleh perusahaan. Sikap Anda...</div>
+<div class="opts">
+<label class="opt" id="o7_0"><input type="radio" name="q7" value="0" onchange="onAns(7,0)"><span><strong>A.</strong> Saya akan menanyakan alasan pembatalan dan bernegosiasi bersama</span></label>
+<label class="opt" id="o7_1"><input type="radio" name="q7" value="1" onchange="onAns(7,1)"><span><strong>B.</strong> Saya akan menanyakan alasan pembatalan dengan berdiskusi bersama</span></label>
+<label class="opt" id="o7_2"><input type="radio" name="q7" value="2" onchange="onAns(7,2)"><span><strong>C.</strong> Saya akan menanyakan alasan pembatalan dan meminta penjelasan</span></label>
+<label class="opt" id="o7_3"><input type="radio" name="q7" value="3" onchange="onAns(7,3)"><span><strong>D.</strong> Saya akan menanyakan alasan pembatalan dan menyarankan pertimbangan ulang</span></label>
+<label class="opt" id="o7_4"><input type="radio" name="q7" value="4" onchange="onAns(7,4)"><span><strong>E.</strong> Saya akan menanyakan alasan pembatalan dan mencari kebenaran yang ada</span></label>
+</div>
+</div>
+<div class="qcard" id="q8">
+<div class="qmeta"><span class="qnum">Soal 8</span><span class="qmat">Pelayanan Publik</span><span class="skbdg" id="sb8"></span></div>
+<div class="qtxt">Jihan menemukan sekelompok siswa yang membolos. Tindakan yang dilakukan adalah...</div>
+<div class="opts">
+<label class="opt" id="o8_0"><input type="radio" name="q8" value="0" onchange="onAns(8,0)"><span><strong>A.</strong> Jihan akan memviralkan kejadian tersebut agar siswa jera</span></label>
+<label class="opt" id="o8_1"><input type="radio" name="q8" value="1" onchange="onAns(8,1)"><span><strong>B.</strong> Jihan akan memberitahukan kejadian tersebut kepada polisi</span></label>
+<label class="opt" id="o8_2"><input type="radio" name="q8" value="2" onchange="onAns(8,2)"><span><strong>C.</strong> Jihan akan membiarkan saja karena sudah biasa</span></label>
+<label class="opt" id="o8_3"><input type="radio" name="q8" value="3" onchange="onAns(8,3)"><span><strong>D.</strong> Jihan akan mengantarkan siswa ke sekolah</span></label>
+<label class="opt" id="o8_4"><input type="radio" name="q8" value="4" onchange="onAns(8,4)"><span><strong>E.</strong> Jihan mendekati siswa dan bertanya untuk memastikan</span></label>
+</div>
+</div>
+<div class="qcard" id="q9">
+<div class="qmeta"><span class="qnum">Soal 9</span><span class="qmat">Pelayanan Publik</span><span class="skbdg" id="sb9"></span></div>
+<div class="qtxt">Sebagai seorang frontliner sikap yang harus ditunjukkan adalah...</div>
+<div class="opts">
+<label class="opt" id="o9_0"><input type="radio" name="q9" value="0" onchange="onAns(9,0)"><span><strong>A.</strong> Saya akan memberikan pelayanan dengan senyuman ramah</span></label>
+<label class="opt" id="o9_1"><input type="radio" name="q9" value="1" onchange="onAns(9,1)"><span><strong>B.</strong> Saya akan memberikan pelayanan dengan simpati dan ramah</span></label>
+<label class="opt" id="o9_2"><input type="radio" name="q9" value="2" onchange="onAns(9,2)"><span><strong>C.</strong> Saya memberikan pelayanan dengan ramah</span></label>
+<label class="opt" id="o9_3"><input type="radio" name="q9" value="3" onchange="onAns(9,3)"><span><strong>D.</strong> Saya akan memberikan pelayanan dengan penuh semangat</span></label>
+<label class="opt" id="o9_4"><input type="radio" name="q9" value="4" onchange="onAns(9,4)"><span><strong>E.</strong> Saya akan memberikan pelayanan dengan semaksimalnya</span></label>
+</div>
+</div>
+<div class="qcard" id="q10">
+<div class="qmeta"><span class="qnum">Soal 10</span><span class="qmat">Pelayanan Publik</span><span class="skbdg" id="sb10"></span></div>
+<div class="qtxt">Melihat ada kedua pelanggan yang berdebat di pusat pelayanan informasi. Anda akan...</div>
+<div class="opts">
+<label class="opt" id="o10_0"><input type="radio" name="q10" value="0" onchange="onAns(10,0)"><span><strong>A.</strong> Saya akan menenangkan kedua pelanggan</span></label>
+<label class="opt" id="o10_1"><input type="radio" name="q10" value="1" onchange="onAns(10,1)"><span><strong>B.</strong> Saya akan melaporkan kepada satpam</span></label>
+<label class="opt" id="o10_2"><input type="radio" name="q10" value="2" onchange="onAns(10,2)"><span><strong>C.</strong> Saya akan menyarankan untuk diskusi di luar</span></label>
+<label class="opt" id="o10_3"><input type="radio" name="q10" value="3" onchange="onAns(10,3)"><span><strong>D.</strong> Saya melerai keduanya dan menenangkan</span></label>
+<label class="opt" id="o10_4"><input type="radio" name="q10" value="4" onchange="onAns(10,4)"><span><strong>E.</strong> Saya menenangkan keduanya setelah satpam</span></label>
+</div>
+</div>
+<div class="sec"><h2>BAGIAN 2: JEJARING KERJA</h2></div>
+<div class="qcard" id="q11">
+<div class="qmeta"><span class="qnum">Soal 11</span><span class="qmat">Jejaring Kerja</span><span class="skbdg" id="sb11"></span></div>
+<div class="qtxt">Ken sangat mencintai mantannya. Tiba-tiba saja dia bertemu dengan Zyler mantannya yang ternyata adalah klien penting perusahaan. Sikap Ken adalah...</div>
+<div class="opts">
+<label class="opt" id="o11_0"><input type="radio" name="q11" value="0" onchange="onAns(11,0)"><span><strong>A.</strong> Ken akan mengutarakan isi hatinya kepada Zyler agar balikan</span></label>
+<label class="opt" id="o11_1"><input type="radio" name="q11" value="1" onchange="onAns(11,1)"><span><strong>B.</strong> Ken akan mengatakan bahwa dia masih mencintai Zyler</span></label>
+<label class="opt" id="o11_2"><input type="radio" name="q11" value="2" onchange="onAns(11,2)"><span><strong>C.</strong> Ken akan menyapa Zyler dengan ramah</span></label>
+<label class="opt" id="o11_3"><input type="radio" name="q11" value="3" onchange="onAns(11,3)"><span><strong>D.</strong> Ken akan mengajak Zyler menjalin hubungan serius lagi</span></label>
+<label class="opt" id="o11_4"><input type="radio" name="q11" value="4" onchange="onAns(11,4)"><span><strong>E.</strong> Ken akan mengajak Zyler menikah</span></label>
+</div>
+</div>
+<div class="qcard" id="q12">
+<div class="qmeta"><span class="qnum">Soal 12</span><span class="qmat">Jejaring Kerja</span><span class="skbdg" id="sb12"></span></div>
+<div class="qtxt">Sebagai pegawai tindakan tepat dalam menjalin hubungan baik dengan rekan adalah...</div>
+<div class="opts">
+<label class="opt" id="o12_0"><input type="radio" name="q12" value="0" onchange="onAns(12,0)"><span><strong>A.</strong> Saya senantiasa membuka obrolan</span></label>
+<label class="opt" id="o12_1"><input type="radio" name="q12" value="1" onchange="onAns(12,1)"><span><strong>B.</strong> Saya bantu mengerjakan tugas</span></label>
+<label class="opt" id="o12_2"><input type="radio" name="q12" value="2" onchange="onAns(12,2)"><span><strong>C.</strong> Saya senantiasa menyapa ramah</span></label>
+<label class="opt" id="o12_3"><input type="radio" name="q12" value="3" onchange="onAns(12,3)"><span><strong>D.</strong> Saya bantu setiap ada kesulitan</span></label>
+<label class="opt" id="o12_4"><input type="radio" name="q12" value="4" onchange="onAns(12,4)"><span><strong>E.</strong> Saya senantiasa menghargai rekan</span></label>
+</div>
+</div>
+<div class="qcard" id="q13">
+<div class="qmeta"><span class="qnum">Soal 13</span><span class="qmat">Jejaring Kerja</span><span class="skbdg" id="sb13"></span></div>
+<div class="qtxt">Ketika mengalami kesulitan dalam bekerja sama. Sikap yang Anda lakukan sebagai pegawai baru adalah...</div>
+<div class="opts">
+<label class="opt" id="o13_0"><input type="radio" name="q13" value="0" onchange="onAns(13,0)"><span><strong>A.</strong> Saya menanyakan kembali pekerjaan yang diperintahkan</span></label>
+<label class="opt" id="o13_1"><input type="radio" name="q13" value="1" onchange="onAns(13,1)"><span><strong>B.</strong> Saya memastikan kembali pekerjaan yang diberikan</span></label>
+<label class="opt" id="o13_2"><input type="radio" name="q13" value="2" onchange="onAns(13,2)"><span><strong>C.</strong> Saya mengerjakan dengan baik dan meminta bantuan saat kesulitan</span></label>
+<label class="opt" id="o13_3"><input type="radio" name="q13" value="3" onchange="onAns(13,3)"><span><strong>D.</strong> Saya mempelajari seluruh pekerjaan dan berkoordinasi</span></label>
+<label class="opt" id="o13_4"><input type="radio" name="q13" value="4" onchange="onAns(13,4)"><span><strong>E.</strong> Saya meminta maaf atas keterlambatan Saya dalam bekerja</span></label>
+</div>
+</div>
+<div class="qcard" id="q14">
+<div class="qmeta"><span class="qnum">Soal 14</span><span class="qmat">Jejaring Kerja</span><span class="skbdg" id="sb14"></span></div>
+<div class="qtxt">Ketika mengalami kesulitan maka Saya akan...</div>
+<div class="opts">
+<label class="opt" id="o14_0"><input type="radio" name="q14" value="0" onchange="onAns(14,0)"><span><strong>A.</strong> Mempelajari secara mandiri saja</span></label>
+<label class="opt" id="o14_1"><input type="radio" name="q14" value="1" onchange="onAns(14,1)"><span><strong>B.</strong> Mempelajari dengan mencari di internet</span></label>
+<label class="opt" id="o14_2"><input type="radio" name="q14" value="2" onchange="onAns(14,2)"><span><strong>C.</strong> Mempelajari dengan AI yang canggih</span></label>
+<label class="opt" id="o14_3"><input type="radio" name="q14" value="3" onchange="onAns(14,3)"><span><strong>D.</strong> Mempelajari sendiri berdasarkan feedback</span></label>
+<label class="opt" id="o14_4"><input type="radio" name="q14" value="4" onchange="onAns(14,4)"><span><strong>E.</strong> Mempelajari dengan atasan yang sudah ahli</span></label>
+</div>
+</div>
+<div class="qcard" id="q15">
+<div class="qmeta"><span class="qnum">Soal 15</span><span class="qmat">Jejaring Kerja</span><span class="skbdg" id="sb15"></span></div>
+<div class="qtxt">Anda adalah manager yang harus dipindahkan ke divisi lain tetapi tidak pada posisi yang sama. Sikap Anda...</div>
+<div class="opts">
+<label class="opt" id="o15_0"><input type="radio" name="q15" value="0" onchange="onAns(15,0)"><span><strong>A.</strong> Saya tetap mempersuasi perusahaan agar tetap menjadi manager</span></label>
+<label class="opt" id="o15_1"><input type="radio" name="q15" value="1" onchange="onAns(15,1)"><span><strong>B.</strong> Saya tetap menerima peraturan sebagai bentuk hormat agar naik jabatan</span></label>
+<label class="opt" id="o15_2"><input type="radio" name="q15" value="2" onchange="onAns(15,2)"><span><strong>C.</strong> Saya tetap menerima kondisi sebagai wujud loyalitas dalam pekerjaan</span></label>
+<label class="opt" id="o15_3"><input type="radio" name="q15" value="3" onchange="onAns(15,3)"><span><strong>D.</strong> Saya tetap menjalankan tugas yang diberikan sebagai bentuk tanggung jawab</span></label>
+<label class="opt" id="o15_4"><input type="radio" name="q15" value="4" onchange="onAns(15,4)"><span><strong>E.</strong> Saya tetap menerima dengan hati yang lapang atas pemindahan posisi dan divisi</span></label>
+</div>
+</div>
+<div class="qcard" id="q16">
+<div class="qmeta"><span class="qnum">Soal 16</span><span class="qmat">Jejaring Kerja</span><span class="skbdg" id="sb16"></span></div>
+<div class="qtxt">Hari ini adalah jadwal Anda untuk menjemput anak di sekolah. Setelah jam pulang rekan Anda meminta bantuan untuk diantarkan ke stasiun yang jaraknya tidak jauh dari sekolah anak Anda. Sikap Anda...</div>
+<div class="opts">
+<label class="opt" id="o16_0"><input type="radio" name="q16" value="0" onchange="onAns(16,0)"><span><strong>A.</strong> Saya akan mengabarkan kepada anak bahwa segera menjemputnya tetapi mengantar teman kerja terlebih dahulu</span></label>
+<label class="opt" id="o16_1"><input type="radio" name="q16" value="1" onchange="onAns(16,1)"><span><strong>B.</strong> Saya akan menjelaskan kepada rekan kerja bahwa harus menjemput anak setelahnya baru dapat mengantarkannya ke stasiun</span></label>
+<label class="opt" id="o16_2"><input type="radio" name="q16" value="2" onchange="onAns(16,2)"><span><strong>C.</strong> Saya langsung mengantar rekan tersebut sebagai bentuk saling membantu</span></label>
+<label class="opt" id="o16_3"><input type="radio" name="q16" value="3" onchange="onAns(16,3)"><span><strong>D.</strong> Saya membantu mengantarkan rekan kerja karena Saya juga pernah dibantu</span></label>
+<label class="opt" id="o16_4"><input type="radio" name="q16" value="4" onchange="onAns(16,4)"><span><strong>E.</strong> Saya mengantar anak terlebih dahulu lalu menjemput rekan di stasiun</span></label>
+</div>
+</div>
+<div class="qcard" id="q17">
+<div class="qmeta"><span class="qnum">Soal 17</span><span class="qmat">Jejaring Kerja</span><span class="skbdg" id="sb17"></span></div>
+<div class="qtxt">Dinas pendidikan merekrut relawan membaca. Sikap Anda...</div>
+<div class="opts">
+<label class="opt" id="o17_0"><input type="radio" name="q17" value="0" onchange="onAns(17,0)"><span><strong>A.</strong> Menyelenggarakan gerakan relawan membaca</span></label>
+<label class="opt" id="o17_1"><input type="radio" name="q17" value="1" onchange="onAns(17,1)"><span><strong>B.</strong> Memberikan pelatihan relawan membaca</span></label>
+<label class="opt" id="o17_2"><input type="radio" name="q17" value="2" onchange="onAns(17,2)"><span><strong>C.</strong> Mengajak teman-teman untuk ikut terlibat sebagai relawan</span></label>
+<label class="opt" id="o17_3"><input type="radio" name="q17" value="3" onchange="onAns(17,3)"><span><strong>D.</strong> Mengajak dinas pendidikan membuka kesempatan relawan</span></label>
+<label class="opt" id="o17_4"><input type="radio" name="q17" value="4" onchange="onAns(17,4)"><span><strong>E.</strong> Memberitahukan informasi kepada relawan membaca</span></label>
+</div>
+</div>
+<div class="qcard" id="q18">
+<div class="qmeta"><span class="qnum">Soal 18</span><span class="qmat">Jejaring Kerja</span><span class="skbdg" id="sb18"></span></div>
+<div class="qtxt">Bekerja dalam tim adalah pekerjaan yang...</div>
+<div class="opts">
+<label class="opt" id="o18_0"><input type="radio" name="q18" value="0" onchange="onAns(18,0)"><span><strong>A.</strong> Saya impikan</span></label>
+<label class="opt" id="o18_1"><input type="radio" name="q18" value="1" onchange="onAns(18,1)"><span><strong>B.</strong> Saya lakukan</span></label>
+<label class="opt" id="o18_2"><input type="radio" name="q18" value="2" onchange="onAns(18,2)"><span><strong>C.</strong> Saya harapkan</span></label>
+<label class="opt" id="o18_3"><input type="radio" name="q18" value="3" onchange="onAns(18,3)"><span><strong>D.</strong> Saya setujui</span></label>
+<label class="opt" id="o18_4"><input type="radio" name="q18" value="4" onchange="onAns(18,4)"><span><strong>E.</strong> Saya inginkan</span></label>
+</div>
+</div>
+<div class="qcard" id="q19">
+<div class="qmeta"><span class="qnum">Soal 19</span><span class="qmat">Jejaring Kerja</span><span class="skbdg" id="sb19"></span></div>
+<div class="qtxt">Sebagai seorang pekerja yang sangat bisa diandalkan Roman akan...</div>
+<div class="opts">
+<label class="opt" id="o19_0"><input type="radio" name="q19" value="0" onchange="onAns(19,0)"><span><strong>A.</strong> Roman bekerja sama dengan rekan kerja</span></label>
+<label class="opt" id="o19_1"><input type="radio" name="q19" value="1" onchange="onAns(19,1)"><span><strong>B.</strong> Roman berkolaborasi bersama rekan kerja</span></label>
+<label class="opt" id="o19_2"><input type="radio" name="q19" value="2" onchange="onAns(19,2)"><span><strong>C.</strong> Roman menjaga nama baik perusahaan</span></label>
+<label class="opt" id="o19_3"><input type="radio" name="q19" value="3" onchange="onAns(19,3)"><span><strong>D.</strong> Roman menjalin keakraban dengan rekan kerja</span></label>
+<label class="opt" id="o19_4"><input type="radio" name="q19" value="4" onchange="onAns(19,4)"><span><strong>E.</strong> Roman menjalankan pekerjaan sesuai tanggung jawab</span></label>
+</div>
+</div>
+<div class="qcard" id="q20">
+<div class="qmeta"><span class="qnum">Soal 20</span><span class="qmat">Jejaring Kerja</span><span class="skbdg" id="sb20"></span></div>
+<div class="qtxt">Toko cabang baru saja buka. Bagaimana cara promosi agar dikenal oleh banyak pihak...</div>
+<div class="opts">
+<label class="opt" id="o20_0"><input type="radio" name="q20" value="0" onchange="onAns(20,0)"><span><strong>A.</strong> Bekerja sama dengan klien yang sudah dikenal</span></label>
+<label class="opt" id="o20_1"><input type="radio" name="q20" value="1" onchange="onAns(20,1)"><span><strong>B.</strong> Bekerja sama dengan seluruh artis yang terkenal</span></label>
+<label class="opt" id="o20_2"><input type="radio" name="q20" value="2" onchange="onAns(20,2)"><span><strong>C.</strong> Bekerja sama melakukan promosi di media sosial</span></label>
+<label class="opt" id="o20_3"><input type="radio" name="q20" value="3" onchange="onAns(20,3)"><span><strong>D.</strong> Bekerja sama dengan perusahaan disekitar</span></label>
+<label class="opt" id="o20_4"><input type="radio" name="q20" value="4" onchange="onAns(20,4)"><span><strong>E.</strong> Bekerja sama dengan masyarakat agar dikenal</span></label>
+</div>
+</div>
+<div class="sec"><h2>BAGIAN 3: PROFESIONALISME</h2></div>
+<div class="qcard" id="q21">
+<div class="qmeta"><span class="qnum">Soal 21</span><span class="qmat">Profesionalisme</span><span class="skbdg" id="sb21"></span></div>
+<div class="qtxt">Wulan merasa keberatan akan tugas yang diberikan. Sikap yang seharusnya dilakukan Wulan adalah...</div>
+<div class="opts">
+<label class="opt" id="o21_0"><input type="radio" name="q21" value="0" onchange="onAns(21,0)"><span><strong>A.</strong> Wulan menerima tugas yang diberikan</span></label>
+<label class="opt" id="o21_1"><input type="radio" name="q21" value="1" onchange="onAns(21,1)"><span><strong>B.</strong> Wulan menerima tugas dengan semangat</span></label>
+<label class="opt" id="o21_2"><input type="radio" name="q21" value="2" onchange="onAns(21,2)"><span><strong>C.</strong> Wulan mempelajari tugas terlebih dahulu</span></label>
+<label class="opt" id="o21_3"><input type="radio" name="q21" value="3" onchange="onAns(21,3)"><span><strong>D.</strong> Wulan mengajak diskusi bos terkait tugas</span></label>
+<label class="opt" id="o21_4"><input type="radio" name="q21" value="4" onchange="onAns(21,4)"><span><strong>E.</strong> Wulan mencari informasi tugas dari rekan</span></label>
+</div>
+</div>
+<div class="qcard" id="q22">
+<div class="qmeta"><span class="qnum">Soal 22</span><span class="qmat">Profesionalisme</span><span class="skbdg" id="sb22"></span></div>
+<div class="qtxt">Bintang tidak sengaja telah menumpahkan air ke atas berkas penting yang harus dikumpulkan hari ini. Tindakan apa yang akan Anda lakukan terhadap Bintang...</div>
+<div class="opts">
+<label class="opt" id="o22_0"><input type="radio" name="q22" value="0" onchange="onAns(22,0)"><span><strong>A.</strong> Saya akan memberitahukan kejadian tersebut kepada rekan lain</span></label>
+<label class="opt" id="o22_1"><input type="radio" name="q22" value="1" onchange="onAns(22,1)"><span><strong>B.</strong> Saya menjelaskan kepada rekan tim bahwa tugas harus dikerjakan ulang sebab keteledoran yang dilakukan oleh Bintang</span></label>
+<label class="opt" id="o22_2"><input type="radio" name="q22" value="2" onchange="onAns(22,2)"><span><strong>C.</strong> Saya mencoba menyelamatkan tugas yang masih bisa terselamatkan dan mengerjakan ulang yang sudah basah sekali</span></label>
+<label class="opt" id="o22_3"><input type="radio" name="q22" value="3" onchange="onAns(22,3)"><span><strong>D.</strong> Saya menenangkan Bintang dan segera mencetak berkas kembali karena sudah ada file backup</span></label>
+<label class="opt" id="o22_4"><input type="radio" name="q22" value="4" onchange="onAns(22,4)"><span><strong>E.</strong> Saya menjelaskan kepada seluruh rekan bahwa itu kesalahan Bintang dan harus dipertanggungjawabkan</span></label>
+</div>
+</div>
+<div class="qcard" id="q23">
+<div class="qmeta"><span class="qnum">Soal 23</span><span class="qmat">Profesionalisme</span><span class="skbdg" id="sb23"></span></div>
+<div class="qtxt">Benny khawatir bahwa presentasi yang dia lakukan mendapatkan hasil yang buruk. Sebagai pemula yang harus dilakukan adalah...</div>
+<div class="opts">
+<label class="opt" id="o23_0"><input type="radio" name="q23" value="0" onchange="onAns(23,0)"><span><strong>A.</strong> Mencoba berbicara sendiri di depan cermin sebagai latihan</span></label>
+<label class="opt" id="o23_1"><input type="radio" name="q23" value="1" onchange="onAns(23,1)"><span><strong>B.</strong> Mencoba berlatih dengan persiapan yang sudah matang</span></label>
+<label class="opt" id="o23_2"><input type="radio" name="q23" value="2" onchange="onAns(23,2)"><span><strong>C.</strong> Mencoba memberitahukan rekan bahwa ini presentasi pertamanya</span></label>
+<label class="opt" id="o23_3"><input type="radio" name="q23" value="3" onchange="onAns(23,3)"><span><strong>D.</strong> Mencoba mengabaikan rasa khawatir</span></label>
+<label class="opt" id="o23_4"><input type="radio" name="q23" value="4" onchange="onAns(23,4)"><span><strong>E.</strong> Mencoba mencari cara agar tenang saat presentasi</span></label>
+</div>
+</div>
+<div class="qcard" id="q24">
+<div class="qmeta"><span class="qnum">Soal 24</span><span class="qmat">Profesionalisme</span><span class="skbdg" id="sb24"></span></div>
+<div class="qtxt">Sebagai seorang pemimpin. Sikap yang akan Anda lakukan saat mengetahui hasil survei kepuasan pelanggan rendah adalah...</div>
+<div class="opts">
+<label class="opt" id="o24_0"><input type="radio" name="q24" value="0" onchange="onAns(24,0)"><span><strong>A.</strong> Saya akan menanyakan kepada pelanggan apa yang tidak disukai</span></label>
+<label class="opt" id="o24_1"><input type="radio" name="q24" value="1" onchange="onAns(24,1)"><span><strong>B.</strong> Saya akan berdiskusi dengan seluruh tim</span></label>
+<label class="opt" id="o24_2"><input type="radio" name="q24" value="2" onchange="onAns(24,2)"><span><strong>C.</strong> Saya akan merencanakan perbaikan berdasarkan hasil evaluasi</span></label>
+<label class="opt" id="o24_3"><input type="radio" name="q24" value="3" onchange="onAns(24,3)"><span><strong>D.</strong> Saya akan menjelaskan bahwa ketidakpuasan pelanggan baru ada saat ini</span></label>
+<label class="opt" id="o24_4"><input type="radio" name="q24" value="4" onchange="onAns(24,4)"><span><strong>E.</strong> Saya akan mengajak rekan tim lain untuk melakukan diskusi</span></label>
+</div>
+</div>
+<div class="qcard" id="q25">
+<div class="qmeta"><span class="qnum">Soal 25</span><span class="qmat">Profesionalisme</span><span class="skbdg" id="sb25"></span></div>
+<div class="qtxt">Kantor Anda melakukan mutasi vertikal. Pekerja dengan kriteria apa yang harus dimutasi...</div>
+<div class="opts">
+<label class="opt" id="o25_0"><input type="radio" name="q25" value="0" onchange="onAns(25,0)"><span><strong>A.</strong> Pekerja yang hanya bisa bekerja di waktu tertentu</span></label>
+<label class="opt" id="o25_1"><input type="radio" name="q25" value="1" onchange="onAns(25,1)"><span><strong>B.</strong> Pekerja yang mampu menjalankan tugas sebagai atasan</span></label>
+<label class="opt" id="o25_2"><input type="radio" name="q25" value="2" onchange="onAns(25,2)"><span><strong>C.</strong> Pekerja yang tinggalnya sesuai dengan cabang perusahaan</span></label>
+<label class="opt" id="o25_3"><input type="radio" name="q25" value="3" onchange="onAns(25,3)"><span><strong>D.</strong> Pekerja yang tidak kompeten dan harus dipecat</span></label>
+<label class="opt" id="o25_4"><input type="radio" name="q25" value="4" onchange="onAns(25,4)"><span><strong>E.</strong> Pekerja yang sudah berakhir masa kerja</span></label>
+</div>
+</div>
+<div class="qcard" id="q26">
+<div class="qmeta"><span class="qnum">Soal 26</span><span class="qmat">Profesionalisme</span><span class="skbdg" id="sb26"></span></div>
+<div class="qtxt">Ketika bekerja Saya merupakan orang yang...</div>
+<div class="opts">
+<label class="opt" id="o26_0"><input type="radio" name="q26" value="0" onchange="onAns(26,0)"><span><strong>A.</strong> Senantiasa membantu rekan kerja lain</span></label>
+<label class="opt" id="o26_1"><input type="radio" name="q26" value="1" onchange="onAns(26,1)"><span><strong>B.</strong> Senantiasa mengerjakan tugas hingga selesai</span></label>
+<label class="opt" id="o26_2"><input type="radio" name="q26" value="2" onchange="onAns(26,2)"><span><strong>C.</strong> Senantiasa bisa diandalkan</span></label>
+<label class="opt" id="o26_3"><input type="radio" name="q26" value="3" onchange="onAns(26,3)"><span><strong>D.</strong> Senantiasa patuh dan taat</span></label>
+<label class="opt" id="o26_4"><input type="radio" name="q26" value="4" onchange="onAns(26,4)"><span><strong>E.</strong> Senantiasa berkolaborasi dengan rekan kerja</span></label>
+</div>
+</div>
+<div class="qcard" id="q27">
+<div class="qmeta"><span class="qnum">Soal 27</span><span class="qmat">Profesionalisme</span><span class="skbdg" id="sb27"></span></div>
+<div class="qtxt">Bagaimana Anda akan mengatasi situasi darurat dalam waktu singkat...</div>
+<div class="opts">
+<label class="opt" id="o27_0"><input type="radio" name="q27" value="0" onchange="onAns(27,0)"><span><strong>A.</strong> Saya bekerja sama dengan tim untuk memetakan solusi berdasarkan masalah</span></label>
+<label class="opt" id="o27_1"><input type="radio" name="q27" value="1" onchange="onAns(27,1)"><span><strong>B.</strong> Saya bekerja sama dengan tim untuk menemukan masalah dan solusinya</span></label>
+<label class="opt" id="o27_2"><input type="radio" name="q27" value="2" onchange="onAns(27,2)"><span><strong>C.</strong> Saya bekerja sama dengan tim untuk mencari cara terbaik menyelesaikan masalah</span></label>
+<label class="opt" id="o27_3"><input type="radio" name="q27" value="3" onchange="onAns(27,3)"><span><strong>D.</strong> Saya bekerja sama dengan tim untuk menyelesaikan masalah jika dibutuhkan</span></label>
+<label class="opt" id="o27_4"><input type="radio" name="q27" value="4" onchange="onAns(27,4)"><span><strong>E.</strong> Saya bekerja sama dengan tim untuk memperbaiki masalah sesuai waktu</span></label>
+</div>
+</div>
+<div class="qcard" id="q28">
+<div class="qmeta"><span class="qnum">Soal 28</span><span class="qmat">Profesionalisme</span><span class="skbdg" id="sb28"></span></div>
+<div class="qtxt">Seorang yang profesional tidak akan melakukan tindakan, kecuali...</div>
+<div class="opts">
+<label class="opt" id="o28_0"><input type="radio" name="q28" value="0" onchange="onAns(28,0)"><span><strong>A.</strong> Diskriminasi</span></label>
+<label class="opt" id="o28_1"><input type="radio" name="q28" value="1" onchange="onAns(28,1)"><span><strong>B.</strong> Marginalisasi</span></label>
+<label class="opt" id="o28_2"><input type="radio" name="q28" value="2" onchange="onAns(28,2)"><span><strong>C.</strong> Prejudis</span></label>
+<label class="opt" id="o28_3"><input type="radio" name="q28" value="3" onchange="onAns(28,3)"><span><strong>D.</strong> Bias</span></label>
+<label class="opt" id="o28_4"><input type="radio" name="q28" value="4" onchange="onAns(28,4)"><span><strong>E.</strong> Integritas</span></label>
+</div>
+</div>
+<div class="qcard" id="q29">
+<div class="qmeta"><span class="qnum">Soal 29</span><span class="qmat">Profesionalisme</span><span class="skbdg" id="sb29"></span></div>
+<div class="qtxt">Menjadi karyawan magang menjadikan Prita harus bekerja maksimal. Sebagai seorang senior yang Anda lakukan adalah...</div>
+<div class="opts">
+<label class="opt" id="o29_0"><input type="radio" name="q29" value="0" onchange="onAns(29,0)"><span><strong>A.</strong> Terus berusaha untuk menyemangati Prita</span></label>
+<label class="opt" id="o29_1"><input type="radio" name="q29" value="1" onchange="onAns(29,1)"><span><strong>B.</strong> Terus membantu Prita</span></label>
+<label class="opt" id="o29_2"><input type="radio" name="q29" value="2" onchange="onAns(29,2)"><span><strong>C.</strong> Terus menjaga keakraban dengan Prita</span></label>
+<label class="opt" id="o29_3"><input type="radio" name="q29" value="3" onchange="onAns(29,3)"><span><strong>D.</strong> Terus memperhatikan Prita</span></label>
+<label class="opt" id="o29_4"><input type="radio" name="q29" value="4" onchange="onAns(29,4)"><span><strong>E.</strong> Terus menjalin kerja sama dengan Prita</span></label>
+</div>
+</div>
+<div class="qcard" id="q30">
+<div class="qmeta"><span class="qnum">Soal 30</span><span class="qmat">Profesionalisme</span><span class="skbdg" id="sb30"></span></div>
+<div class="qtxt">Hasil ujian Kai sangat jelek. Sebagai seorang anak yang baik Kai akan...</div>
+<div class="opts">
+<label class="opt" id="o30_0"><input type="radio" name="q30" value="0" onchange="onAns(30,0)"><span><strong>A.</strong> Kai meminta maaf kepada orang tua dan guru</span></label>
+<label class="opt" id="o30_1"><input type="radio" name="q30" value="1" onchange="onAns(30,1)"><span><strong>B.</strong> Kai meminta maaf dan menjadikannya sebagai pelajaran</span></label>
+<label class="opt" id="o30_2"><input type="radio" name="q30" value="2" onchange="onAns(30,2)"><span><strong>C.</strong> Kai meminta maaf kepada kedua orang tua dan janji tidak ulangi</span></label>
+<label class="opt" id="o30_3"><input type="radio" name="q30" value="3" onchange="onAns(30,3)"><span><strong>D.</strong> Kai meminta maaf kepada guru dan mengajak guru memaklumi</span></label>
+<label class="opt" id="o30_4"><input type="radio" name="q30" value="4" onchange="onAns(30,4)"><span><strong>E.</strong> Kai meminta maaf kepada kepala sekolah dan mengajak diskusi</span></label>
+</div>
+</div>
+<div class="sec"><h2>BAGIAN 4: TEKNOLOGI INFORMASI DAN KOMUNIKASI (TIK)</h2></div>
+<div class="qcard" id="q31">
+<div class="qmeta"><span class="qnum">Soal 31</span><span class="qmat">TIK</span><span class="skbdg" id="sb31"></span></div>
+<div class="qtxt">Anda sedang mengerjakan tugas menggunakan laptop kantor tiba-tiba saja ada email berisikan virus masuk. Sebagai seorang ASN sikap Anda adalah...</div>
+<div class="opts">
+<label class="opt" id="o31_0"><input type="radio" name="q31" value="0" onchange="onAns(31,0)"><span><strong>A.</strong> Anda akan segera melaporkan email kepada atasan karena sangat berbahaya</span></label>
+<label class="opt" id="o31_1"><input type="radio" name="q31" value="1" onchange="onAns(31,1)"><span><strong>B.</strong> Anda akan melaporkan temuan email mencurigakan tersebut kepada atasan dan meminta solusi</span></label>
+<label class="opt" id="o31_2"><input type="radio" name="q31" value="2" onchange="onAns(31,2)"><span><strong>C.</strong> Anda akan mengajak rekan divisi IT untuk memeriksa email tersebut dan memastikan isinya</span></label>
+<label class="opt" id="o31_3"><input type="radio" name="q31" value="3" onchange="onAns(31,3)"><span><strong>D.</strong> Anda akan membuka sendiri berbekal informasi dari internet yang telah Anda pelajari secara mandiri</span></label>
+<label class="opt" id="o31_4"><input type="radio" name="q31" value="4" onchange="onAns(31,4)"><span><strong>E.</strong> Anda akan mengabaikannya karena tugas yang Anda kerjakan masih sangat banyak</span></label>
+</div>
+</div>
+<div class="qcard" id="q32">
+<div class="qmeta"><span class="qnum">Soal 32</span><span class="qmat">TIK</span><span class="skbdg" id="sb32"></span></div>
+<div class="qtxt">Pagi ini seluruh karyawan diwajibkan untuk mengubah sistem input data menggunakan sistem digital. Sikap Anda adalah...</div>
+<div class="opts">
+<label class="opt" id="o32_0"><input type="radio" name="q32" value="0" onchange="onAns(32,0)"><span><strong>A.</strong> Anda berusaha untuk mempelajari sistem digital dalam menginput data</span></label>
+<label class="opt" id="o32_1"><input type="radio" name="q32" value="1" onchange="onAns(32,1)"><span><strong>B.</strong> Anda belajar untuk menggunakan sistem digital dalam input data melalui sosial media</span></label>
+<label class="opt" id="o32_2"><input type="radio" name="q32" value="2" onchange="onAns(32,2)"><span><strong>C.</strong> Anda belajar bersama dengan rekan lain dalam penggunaan input sistem digital terbaru</span></label>
+<label class="opt" id="o32_3"><input type="radio" name="q32" value="3" onchange="onAns(32,3)"><span><strong>D.</strong> Anda belajar menggunakan sistem digital setelah mengerjakan input data manual</span></label>
+<label class="opt" id="o32_4"><input type="radio" name="q32" value="4" onchange="onAns(32,4)"><span><strong>E.</strong> Anda langsung menggunakan sistem digital sesuai dengan perintah walaupun belum paham</span></label>
+</div>
+</div>
+<div class="qcard" id="q33">
+<div class="qmeta"><span class="qnum">Soal 33</span><span class="qmat">TIK</span><span class="skbdg" id="sb33"></span></div>
+<div class="qtxt">Sebagai content creator yang baru saja terkenal. Sikap Anda dalam menghadapi kehidupan tersebut adalah...</div>
+<div class="opts">
+<label class="opt" id="o33_0"><input type="radio" name="q33" value="0" onchange="onAns(33,0)"><span><strong>A.</strong> Mengabaikan segala ketenaran karena itu hanya dunia</span></label>
+<label class="opt" id="o33_1"><input type="radio" name="q33" value="1" onchange="onAns(33,1)"><span><strong>B.</strong> Menenangkan diri sambil menyusun segala hal yang harus dilakukan</span></label>
+<label class="opt" id="o33_2"><input type="radio" name="q33" value="2" onchange="onAns(33,2)"><span><strong>C.</strong> Mengabaikannya karena Anda memang sudah sangat terkenal jadi sudah biasa</span></label>
+<label class="opt" id="o33_3"><input type="radio" name="q33" value="3" onchange="onAns(33,3)"><span><strong>D.</strong> Memposting kegiatan sehari-hari yang positif agar semua orang meyakini bahwa Anda bahagia</span></label>
+<label class="opt" id="o33_4"><input type="radio" name="q33" value="4" onchange="onAns(33,4)"><span><strong>E.</strong> Meyakinkan diri bahwa setiap pekerjaan akan ada kesulitan dan segera memetakan program kerja</span></label>
+</div>
+</div>
+<div class="qcard" id="q34">
+<div class="qmeta"><span class="qnum">Soal 34</span><span class="qmat">TIK</span><span class="skbdg" id="sb34"></span></div>
+<div class="qtxt">Laptop Judika tiba-tiba saja terserang malware yang menyebabkan laptopnya mati. Tindakan yang dilakukan oleh Mark adalah...</div>
+<div class="opts">
+<label class="opt" id="o34_0"><input type="radio" name="q34" value="0" onchange="onAns(34,0)"><span><strong>A.</strong> Mark membeli laptop baru untuk Judika karena malware sangat berbahaya</span></label>
+<label class="opt" id="o34_1"><input type="radio" name="q34" value="1" onchange="onAns(34,1)"><span><strong>B.</strong> Mark membeli antivirus untuk Judika agar mengatasi malware yang ada</span></label>
+<label class="opt" id="o34_2"><input type="radio" name="q34" value="2" onchange="onAns(34,2)"><span><strong>C.</strong> Mark membawa Judika ke servis laptop agar masalah cepat selesai</span></label>
+<label class="opt" id="o34_3"><input type="radio" name="q34" value="3" onchange="onAns(34,3)"><span><strong>D.</strong> Mark mempelajari malware yang menyerang laptop Judika</span></label>
+<label class="opt" id="o34_4"><input type="radio" name="q34" value="4" onchange="onAns(34,4)"><span><strong>E.</strong> Mark menyewa laptop lain untuk Judika pakai agar tetap produktif</span></label>
+</div>
+</div>
+<div class="qcard" id="q35">
+<div class="qmeta"><span class="qnum">Soal 35</span><span class="qmat">TIK</span><span class="skbdg" id="sb35"></span></div>
+<div class="qtxt">Salah satu Bank terbesar di Indonesia baru saja mengalami data leakage sehingga banyak data nasabah yang dicuri dan disalahgunakan. Sikap Anda sebagai seorang nasabah adalah...</div>
+<div class="opts">
+<label class="opt" id="o35_0"><input type="radio" name="q35" value="0" onchange="onAns(35,0)"><span><strong>A.</strong> Melakukan antisipasi dengan mempelajari dan berdiskusi dengan keluarga untuk menghindari jadi korban</span></label>
+<label class="opt" id="o35_1"><input type="radio" name="q35" value="1" onchange="onAns(35,1)"><span><strong>B.</strong> Melakukan konfirmasi dan langkah pengamanan yang diberikan oleh pihak bank</span></label>
+<label class="opt" id="o35_2"><input type="radio" name="q35" value="2" onchange="onAns(35,2)"><span><strong>C.</strong> Menjadikan hal tersebut sebagai pembelajaran yang bermakna</span></label>
+<label class="opt" id="o35_3"><input type="radio" name="q35" value="3" onchange="onAns(35,3)"><span><strong>D.</strong> Mencari tahu penyebab dari data leakage agar mendapatkan tambahan pengetahuan</span></label>
+<label class="opt" id="o35_4"><input type="radio" name="q35" value="4" onchange="onAns(35,4)"><span><strong>E.</strong> Melakukan riset dasar agar bisa mengerti apa itu data leakage</span></label>
+</div>
+</div>
+<div class="sec"><h2>BAGIAN 5: SOSIAL BUDAYA</h2></div>
+<div class="qcard" id="q36">
+<div class="qmeta"><span class="qnum">Soal 36</span><span class="qmat">Sosial Budaya</span><span class="skbdg" id="sb36"></span></div>
+<div class="qtxt">Pada awal masa jabatan tidak ada permasalahan yang terjadi. Tiba-tiba saja muncul berita bahwa terdapat 7 pulau yang dijadikan hak milik oleh provinsi lain. Sebagai seorang gubernur sikap Anda...</div>
+<div class="opts">
+<label class="opt" id="o36_0"><input type="radio" name="q36" value="0" onchange="onAns(36,0)"><span><strong>A.</strong> Anda akan menganggap bahwa hal tersebut adalah hal yang perlu untuk dihargai karena unik</span></label>
+<label class="opt" id="o36_1"><input type="radio" name="q36" value="1" onchange="onAns(36,1)"><span><strong>B.</strong> Anda merasa bahwa yang dilakukan oknum pejabat sangat tidak etis dan kurang sesuai</span></label>
+<label class="opt" id="o36_2"><input type="radio" name="q36" value="2" onchange="onAns(36,2)"><span><strong>C.</strong> Anda menolak pernyataan tersebut karena tidak ada konfirmasi ataupun rapat yang membahas hal itu</span></label>
+<label class="opt" id="o36_3"><input type="radio" name="q36" value="3" onchange="onAns(36,3)"><span><strong>D.</strong> Anda tetap menjalankan tugas di provinsi Anda sebagai bentuk kewajiban walaupun harus kehilangan 7 pulau</span></label>
+<label class="opt" id="o36_4"><input type="radio" name="q36" value="4" onchange="onAns(36,4)"><span><strong>E.</strong> Anda menjalankan tugas dengan profesional dan mengabaikan kejadian yang ada</span></label>
+</div>
+</div>
+<div class="qcard" id="q37">
+<div class="qmeta"><span class="qnum">Soal 37</span><span class="qmat">Sosial Budaya</span><span class="skbdg" id="sb37"></span></div>
+<div class="qtxt">Sebagai seorang kepala Desa yang baru. Tiba-tiba datang sekelompok warga yang mengatakan bahwa Saya tidak layak menjadi Kepala Desa karena hanya seorang pendatang. Sikap Saya...</div>
+<div class="opts">
+<label class="opt" id="o37_0"><input type="radio" name="q37" value="0" onchange="onAns(37,0)"><span><strong>A.</strong> Melakukan diskusi bersama dengan warga dan seluruh aparat Desa terkait dengan permasalahan yang ada</span></label>
+<label class="opt" id="o37_1"><input type="radio" name="q37" value="1" onchange="onAns(37,1)"><span><strong>B.</strong> Melakukan tindakan persuasi agar warga tersebut mau menyetujui Saya sebagai Kepala Desa yang mumpuni</span></label>
+<label class="opt" id="o37_2"><input type="radio" name="q37" value="2" onchange="onAns(37,2)"><span><strong>C.</strong> Melakukan negosiasi bersama dengan warga tersebut dan mencari solusi atas ketidaksepakatannya</span></label>
+<label class="opt" id="o37_3"><input type="radio" name="q37" value="3" onchange="onAns(37,3)"><span><strong>D.</strong> Melakukan pengunduran diri saja karena hal tersebut dapat meminimalisir terjadinya perpecahan</span></label>
+<label class="opt" id="o37_4"><input type="radio" name="q37" value="4" onchange="onAns(37,4)"><span><strong>E.</strong> Melakukan diskusi dengan seluruh warga dan tokoh masyarakat untuk mencari solusi tepat</span></label>
+</div>
+</div>
+<div class="qcard" id="q38">
+<div class="qmeta"><span class="qnum">Soal 38</span><span class="qmat">Sosial Budaya</span><span class="skbdg" id="sb38"></span></div>
+<div class="qtxt">Seluruh karyawan diwajibkan untuk menggunakan pakaian adat sesuai hasil undian. Ketika giliran Anda mengambil undian ternyata yang didapat adalah baju Sangkarut yang namanya saja Anda tidak pernah dengar. Maka Anda...</div>
+<div class="opts">
+<label class="opt" id="o38_0"><input type="radio" name="q38" value="0" onchange="onAns(38,0)"><span><strong>A.</strong> Anda menolak untuk memakai pakaian adat tersebut karena sangat langka dan sulit ditemukan</span></label>
+<label class="opt" id="o38_1"><input type="radio" name="q38" value="1" onchange="onAns(38,1)"><span><strong>B.</strong> Anda menolak menggunakan pakaian tersebut karena tidak pernah mengenalinya</span></label>
+<label class="opt" id="o38_2"><input type="radio" name="q38" value="2" onchange="onAns(38,2)"><span><strong>C.</strong> Anda mengabaikan kesulitan yang ada dan mencoba untuk mengkreasikan baju adat tersebut</span></label>
+<label class="opt" id="o38_3"><input type="radio" name="q38" value="3" onchange="onAns(38,3)"><span><strong>D.</strong> Anda mengabaikan kelangkaan baju adat tersebut dan terus berusaha mencari pinjaman baju di toko sewa</span></label>
+<label class="opt" id="o38_4"><input type="radio" name="q38" value="4" onchange="onAns(38,4)"><span><strong>E.</strong> Anda menolak untuk menggunakannya karena bingung baju itu berasal dari daerah mana</span></label>
+</div>
+</div>
+<div class="qcard" id="q39">
+<div class="qmeta"><span class="qnum">Soal 39</span><span class="qmat">Sosial Budaya</span><span class="skbdg" id="sb39"></span></div>
+<div class="qtxt">Anda baru saja datang ke Desa baru untuk bertugas. Ternyata di Desa tersebut ada ritual menghormati setiap malam minggu dengan tidak keluar rumah hingga senin pagi. Karena Anda adalah seorang pendatang, maka sikap Anda adalah...</div>
+<div class="opts">
+<label class="opt" id="o39_0"><input type="radio" name="q39" value="0" onchange="onAns(39,0)"><span><strong>A.</strong> Pura-pura tidak tahu bahwa ada aturan ritual adat seperti itu</span></label>
+<label class="opt" id="o39_1"><input type="radio" name="q39" value="1" onchange="onAns(39,1)"><span><strong>B.</strong> Menganggap bahwa aturan ritual tersebut hanyalah omong kosong belaka</span></label>
+<label class="opt" id="o39_2"><input type="radio" name="q39" value="2" onchange="onAns(39,2)"><span><strong>C.</strong> Mematuhi aturan ritual tersebut karena disuruh</span></label>
+<label class="opt" id="o39_3"><input type="radio" name="q39" value="3" onchange="onAns(39,3)"><span><strong>D.</strong> Merasa bahwa aturan ritual tersebut perlu dipatuhi karena pamali</span></label>
+<label class="opt" id="o39_4"><input type="radio" name="q39" value="4" onchange="onAns(39,4)"><span><strong>E.</strong> Mengikuti aturan ritual tersebut agar dianggap baik</span></label>
+</div>
+</div>
+<div class="qcard" id="q40">
+<div class="qmeta"><span class="qnum">Soal 40</span><span class="qmat">Sosial Budaya</span><span class="skbdg" id="sb40"></span></div>
+<div class="qtxt">Tindakan seperti apa yang dapat disebut sebagai perilaku melestarikan budaya lokal sejak dini...</div>
+<div class="opts">
+<label class="opt" id="o40_0"><input type="radio" name="q40" value="0" onchange="onAns(40,0)"><span><strong>A.</strong> Saya mempercayai seluruh budaya yang ada dan menerapkannya dalam kehidupan sehari-hari</span></label>
+<label class="opt" id="o40_1"><input type="radio" name="q40" value="1" onchange="onAns(40,1)"><span><strong>B.</strong> Saya mencari informasi terkait budaya lokal dan membagikannya kepada keluarga</span></label>
+<label class="opt" id="o40_2"><input type="radio" name="q40" value="2" onchange="onAns(40,2)"><span><strong>C.</strong> Saya merenungi seluruh makna dalam penerapan dan pemahaman dari setiap budaya yang ada</span></label>
+<label class="opt" id="o40_3"><input type="radio" name="q40" value="3" onchange="onAns(40,3)"><span><strong>D.</strong> Saya mengajak seluruh warga untuk mempercayai budaya lokal yang ada</span></label>
+<label class="opt" id="o40_4"><input type="radio" name="q40" value="4" onchange="onAns(40,4)"><span><strong>E.</strong> Saya mencari informasi terkait budaya lokal dan membagikannya kepada masyarakat luas melalui media sosial</span></label>
+</div>
+</div>
+<div class="sec"><h2>BAGIAN 6: ANTI RADIKALISME</h2></div>
+<div class="qcard" id="q41">
+<div class="qmeta"><span class="qnum">Soal 41</span><span class="qmat">Anti Radikalisme</span><span class="skbdg" id="sb41"></span></div>
+<div class="qtxt">Kamu bertemu dengan rekan yang menyatakan secara terbuka bahwa Ia tidak menyukai karyawan lain yang memiliki keyakinan berbeda dengannya. Sikap Anda...</div>
+<div class="opts">
+<label class="opt" id="o41_0"><input type="radio" name="q41" value="0" onchange="onAns(41,0)"><span><strong>A.</strong> Saya akan langsung memecat karyawan yang melakukan tindakan radikal di kantor</span></label>
+<label class="opt" id="o41_1"><input type="radio" name="q41" value="1" onchange="onAns(41,1)"><span><strong>B.</strong> Saya akan langsung memberikan peneguran secara lisan di depan seluruh karyawan lain</span></label>
+<label class="opt" id="o41_2"><input type="radio" name="q41" value="2" onchange="onAns(41,2)"><span><strong>C.</strong> Saya akan langsung memanggil karyawan yang bersangkutan dan mengajak diskusi terkait permasalahan</span></label>
+<label class="opt" id="o41_3"><input type="radio" name="q41" value="3" onchange="onAns(41,3)"><span><strong>D.</strong> Saya akan langsung mendiskusikan persoalan dengan karyawan yang terlibat dan mendiskusikan solusi bersama</span></label>
+<label class="opt" id="o41_4"><input type="radio" name="q41" value="4" onchange="onAns(41,4)"><span><strong>E.</strong> Saya akan langsung mengajak diskusi seluruh karyawan untuk mencari sumber masalah dan menemukan solusi tepat</span></label>
+</div>
+</div>
+<div class="qcard" id="q42">
+<div class="qmeta"><span class="qnum">Soal 42</span><span class="qmat">Anti Radikalisme</span><span class="skbdg" id="sb42"></span></div>
+<div class="qtxt">Kamu baru belajar menggunakan pakaian tertutup dan hijab. Tiba-tiba saat sedang bersantai di sebuah cafe Kamu diarahkan untuk meninggalkan cafe karena ada beberapa pelanggan yang tidak menyukai keberadaan Kamu. Sikap satpam adalah...</div>
+<div class="opts">
+<label class="opt" id="o42_0"><input type="radio" name="q42" value="0" onchange="onAns(42,0)"><span><strong>A.</strong> Sangat salah karena terlalu berprasangka buruk terhadap Anda</span></label>
+<label class="opt" id="o42_1"><input type="radio" name="q42" value="1" onchange="onAns(42,1)"><span><strong>B.</strong> Sangat salah karena hanya berpihak kepada sekelompok orang tanpa mencari tahu kebenaran</span></label>
+<label class="opt" id="o42_2"><input type="radio" name="q42" value="2" onchange="onAns(42,2)"><span><strong>C.</strong> Sangat tidak pantas karena tidak adil</span></label>
+<label class="opt" id="o42_3"><input type="radio" name="q42" value="3" onchange="onAns(42,3)"><span><strong>D.</strong> Sangat tidak berperikemanusiaan karena mencela cara berpakaian Anda</span></label>
+<label class="opt" id="o42_4"><input type="radio" name="q42" value="4" onchange="onAns(42,4)"><span><strong>E.</strong> Sangat buruk karena tidak profesional dalam bekerja</span></label>
+</div>
+</div>
+<div class="qcard" id="q43">
+<div class="qmeta"><span class="qnum">Soal 43</span><span class="qmat">Anti Radikalisme</span><span class="skbdg" id="sb43"></span></div>
+<div class="qtxt">Siang ini Anda mendapat berita adanya korupsi 300 triliun pada salah satu perusahaan BUMN. Sebagai seorang jurnalis yang akan Anda lakukan adalah...</div>
+<div class="opts">
+<label class="opt" id="o43_0"><input type="radio" name="q43" value="0" onchange="onAns(43,0)"><span><strong>A.</strong> Saya akan langsung menuju lokasi perusahaan untuk meliput berita</span></label>
+<label class="opt" id="o43_1"><input type="radio" name="q43" value="1" onchange="onAns(43,1)"><span><strong>B.</strong> Saya akan langsung menuju perusahaan untuk meliput berita aktual</span></label>
+<label class="opt" id="o43_2"><input type="radio" name="q43" value="2" onchange="onAns(43,2)"><span><strong>C.</strong> Saya akan langsung menemui tersangka dan meminta penjelasan</span></label>
+<label class="opt" id="o43_3"><input type="radio" name="q43" value="3" onchange="onAns(43,3)"><span><strong>D.</strong> Saya akan langsung mengunggah berita yang pasti walaupun belum menemui kebenaran</span></label>
+<label class="opt" id="o43_4"><input type="radio" name="q43" value="4" onchange="onAns(43,4)"><span><strong>E.</strong> Saya akan melakukan siaran langsung agar seluruh warganet mengetahui keburukan perusahaan</span></label>
+</div>
+</div>
+<div class="qcard" id="q44">
+<div class="qmeta"><span class="qnum">Soal 44</span><span class="qmat">Anti Radikalisme</span><span class="skbdg" id="sb44"></span></div>
+<div class="qtxt">Hari ini Anda diarahkan oleh dosen untuk menggantikannya dalam kelas mata pelajaran kewarganegaraan. Apa pembelajaran yang akan Anda berikan...</div>
+<div class="opts">
+<label class="opt" id="o44_0"><input type="radio" name="q44" value="0" onchange="onAns(44,0)"><span><strong>A.</strong> Konsep pilar negara</span></label>
+<label class="opt" id="o44_1"><input type="radio" name="q44" value="1" onchange="onAns(44,1)"><span><strong>B.</strong> Kaedah menjadi warga yang baik</span></label>
+<label class="opt" id="o44_2"><input type="radio" name="q44" value="2" onchange="onAns(44,2)"><span><strong>C.</strong> Konsep komunisme</span></label>
+<label class="opt" id="o44_3"><input type="radio" name="q44" value="3" onchange="onAns(44,3)"><span><strong>D.</strong> Pemahaman akan manusia</span></label>
+<label class="opt" id="o44_4"><input type="radio" name="q44" value="4" onchange="onAns(44,4)"><span><strong>E.</strong> Konsep warga dan negara</span></label>
+</div>
+</div>
+<div class="qcard" id="q45">
+<div class="qmeta"><span class="qnum">Soal 45</span><span class="qmat">Anti Radikalisme</span><span class="skbdg" id="sb45"></span></div>
+<div class="qtxt">Ketika rekan kerja anak Anda bertamu dan bermain ke rumah. Anda mendengar anak Anda dan rekannya menceritakan bos mereka sepertinya telah bergabung dalam aliran sesat. Sebagai seorang Ibu tindakan yang Anda lakukan...</div>
+<div class="opts">
+<label class="opt" id="o45_0"><input type="radio" name="q45" value="0" onchange="onAns(45,0)"><span><strong>A.</strong> Mengajak anak Saya agar tidak mudah terprovokasi</span></label>
+<label class="opt" id="o45_1"><input type="radio" name="q45" value="1" onchange="onAns(45,1)"><span><strong>B.</strong> Mengajak anak Saya untuk berhenti bergaul dengan rekan seperti itu</span></label>
+<label class="opt" id="o45_2"><input type="radio" name="q45" value="2" onchange="onAns(45,2)"><span><strong>C.</strong> Mengajak anak Saya untuk berhenti bekerja di perusahaan itu</span></label>
+<label class="opt" id="o45_3"><input type="radio" name="q45" value="3" onchange="onAns(45,3)"><span><strong>D.</strong> Mengajak anak Saya untuk melaporkan ke pihak berwajib</span></label>
+<label class="opt" id="o45_4"><input type="radio" name="q45" value="4" onchange="onAns(45,4)"><span><strong>E.</strong> Mengajak anak Saya dan rekannya untuk membahas topik lain saja</span></label>
+</div>
+</div>
+  </div>
+
+  <div class="submit-area">
+    <button class="btn-sub" id="btnSub">&#10003; Selesai &amp; Lihat Skor</button>
+  </div>
+</div>
+
+</div>
+<script>
+var SCORES = [
+  [4,5,1,3,2],
+  [3,4,5,2,1],
+  [4,2,3,1,5],
+  [1,3,4,5,2],
+  [2,3,5,4,1],
+  [4,2,5,1,3],
+  [4,5,2,3,1],
+  [1,3,2,4,5],
+  [2,5,3,4,1],
+  [4,3,2,5,1],
+  [3,4,5,2,1],
+  [1,3,4,2,5],
+  [3,2,4,5,1],
+  [2,5,3,4,1],
+  [2,1,4,5,3],
+  [4,5,3,2,1],
+  [3,4,5,1,2],
+  [2,5,3,4,1],
+  [4,5,2,1,3],
+  [5,2,1,3,4],
+  [4,5,3,1,2],
+  [3,2,4,5,1],
+  [4,5,1,2,3],
+  [2,5,3,1,4],
+  [3,5,4,1,2],
+  [1,2,4,3,5],
+  [5,4,3,1,2],
+  [1,2,3,4,5],
+  [3,2,4,1,5],
+  [4,5,3,2,1],
+  [5,3,4,2,1],
+  [3,5,4,1,2],
+  [2,4,3,1,5],
+  [3,4,5,2,1],
+  [4,5,1,3,2],
+  [1,4,5,3,2],
+  [4,5,2,1,3],
+  [3,1,4,5,2],
+  [1,2,5,4,3],
+  [2,4,1,3,5],
+  [1,2,4,5,3],
+  [4,5,3,2,1],
+  [4,5,3,2,1],
+  [4,3,2,1,5],
+  [5,2,1,3,4],
+];
+
+var NOS = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45];
+var MATS = ["Pelayanan Publik","Pelayanan Publik","Pelayanan Publik","Pelayanan Publik","Pelayanan Publik","Pelayanan Publik","Pelayanan Publik","Pelayanan Publik","Pelayanan Publik","Pelayanan Publik","Jejaring Kerja","Jejaring Kerja","Jejaring Kerja","Jejaring Kerja","Jejaring Kerja","Jejaring Kerja","Jejaring Kerja","Jejaring Kerja","Jejaring Kerja","Jejaring Kerja","Profesionalisme","Profesionalisme","Profesionalisme","Profesionalisme","Profesionalisme","Profesionalisme","Profesionalisme","Profesionalisme","Profesionalisme","Profesionalisme","TIK","TIK","TIK","TIK","TIK","Sosial Budaya","Sosial Budaya","Sosial Budaya","Sosial Budaya","Sosial Budaya","Anti Radikalisme","Anti Radikalisme","Anti Radikalisme","Anti Radikalisme","Anti Radikalisme"];
+
+var ans = {};
+var total = 0;
+var submitted = false;
+var tLeft = 1200;
+var tInt = null;
+
+function onAns(no, val) {
+  if (submitted) return;
+  var idx = no - 1;
+  var was = ans.hasOwnProperty(no);
+  ans[no] = val;
+  if (!was) { total++; updateProg(); }
+  for (var i = 0; i < 5; i++) {
+    var el = document.getElementById("o" + no + "_" + i);
+    if (el) el.className = "opt" + (i === val ? " sel" : "");
+  }
+  var c = document.getElementById("q" + no);
+  if (c) c.className = "qcard";
+}
+
+function updateProg() {
+  var pct = Math.round((total / 45) * 100);
+  document.getElementById("progTxt").innerHTML = total + " / 45 dijawab";
+  document.getElementById("progFill").style.width = pct + "%";
+}
+
+function updateTimer() {
+  var m = Math.floor(tLeft / 60);
+  var s = tLeft % 60;
+  var mm = m < 10 ? "0" + m : "" + m;
+  var ss = s < 10 ? "0" + s : "" + s;
+  document.getElementById("timerTxt").innerHTML = mm + ":" + ss;
+  var tb = document.getElementById("timerBox");
+  if (tLeft <= 60) tb.className = "timer t-red";
+  else if (tLeft <= 300) tb.className = "timer t-orange";
+  else tb.className = "timer t-blue";
+}
+
+function startTimer() {
+  tInt = setInterval(function() {
+    if (submitted) { clearInterval(tInt); return; }
+    tLeft--;
+    updateTimer();
+    if (tLeft <= 0) {
+      clearInterval(tInt);
+      submitted = true;
+      document.getElementById("overlay").className = "overlay on";
+    }
+  }, 1000);
+}
+
+function showResult() {
+  var tot = 0;
+  var bag = {"Pelayanan Publik":[0,50],"Jejaring Kerja":[0,50],"Profesionalisme":[0,50],"TIK":[0,25],"Sosial Budaya":[0,25],"Anti Radikalisme":[0,25]};
+  for (var i = 0; i < 45; i++) {
+    var no = NOS[i];
+    var v = ans.hasOwnProperty(no) ? ans[no] : -1;
+    var sc = v >= 0 ? SCORES[i][v] : 0;
+    tot += sc;
+    var m = MATS[i];
+    if (bag[m]) bag[m][0] += sc;
+    var bd = document.getElementById("sb" + no);
+    if (bd) { bd.innerHTML = "Skor: " + sc; bd.className = "skbdg on sk" + sc; }
+  }
+  var pct = Math.round((tot / 225) * 100);
+  var lbl = pct >= 90 ? "Luar Biasa!" : pct >= 75 ? "Bagus!" : pct >= 60 ? "Cukup Baik" : "Perlu Latihan Lagi";
+  document.getElementById("resScore").innerHTML = tot;
+  document.getElementById("resLabel").innerHTML = lbl + " (" + pct + "%)";
+  document.getElementById("resSub").innerHTML = "Nilai kamu " + tot + " dari maksimal 225 poin.";
+  var tbl = "<tr><th>Bagian</th><th>Skor</th><th>Max</th><th>%</th></tr>";
+  var keys = ["Pelayanan Publik","Jejaring Kerja","Profesionalisme","TIK","Sosial Budaya","Anti Radikalisme"];
+  for (var k = 0; k < keys.length; k++) {
+    var nm = keys[k];
+    var vs = bag[nm][0];
+    var vmx = bag[nm][1];
+    var p2 = Math.round((vs / vmx) * 100);
+    tbl += "<tr><td>" + nm + "</td><td><span class='pill'>" + vs + "</span></td><td>" + vmx + "</td><td>" + p2 + "%</td></tr>";
+  }
+  document.getElementById("resTable").innerHTML = tbl;
+  var rp = document.getElementById("resPanel");
+  rp.className = "res on";
+  rp.scrollIntoView({behavior:"smooth"});
+}
+
+function doSubmit() {
+  var un = [];
+  for (var i = 0; i < 45; i++) { if (!ans.hasOwnProperty(NOS[i])) un.push(NOS[i]); }
+  if (un.length > 0) {
+    var al = document.getElementById("alrt");
+    al.innerHTML = "Masih ada " + un.length + " soal belum dijawab (No: " + un.slice(0,8).join(", ") + (un.length > 8 ? "..." : "") + ")";
+    al.className = "alrt on";
+    for (var j = 0; j < un.length; j++) { var c = document.getElementById("q" + un[j]); if (c) c.className = "qcard err"; }
+    document.getElementById("q" + un[0]).scrollIntoView({behavior:"smooth", block:"center"});
+    return;
+  }
+  document.getElementById("alrt").className = "alrt";
+  submitted = true;
+  clearInterval(tInt);
+  showResult();
+}
+
+function doReview() {
+  for (var i = 0; i < 45; i++) {
+    var no = NOS[i];
+    var v = ans.hasOwnProperty(no) ? ans[no] : -1;
+    var maxSk = Math.max(SCORES[i][0],SCORES[i][1],SCORES[i][2],SCORES[i][3],SCORES[i][4]);
+    for (var j = 0; j < 5; j++) {
+      var el = document.getElementById("o" + no + "_" + j);
+      if (!el) continue;
+      el.className = "opt";
+      if (j === v) { el.className = "opt " + (SCORES[i][j] === maxSk ? "ok" : "no"); }
+      else if (SCORES[i][j] === maxSk) { el.className = "opt ok"; }
+    }
+  }
+  document.getElementById("q1").scrollIntoView({behavior:"smooth"});
+}
+
+function doReset() {
+  ans = {}; total = 0; submitted = false; tLeft = 1200;
+  updateProg(); updateTimer();
+  document.getElementById("resPanel").className = "res";
+  document.getElementById("alrt").className = "alrt";
+  var radios = document.querySelectorAll("input[type=radio]");
+  for (var i = 0; i < radios.length; i++) radios[i].checked = false;
+  var opts = document.querySelectorAll(".opt");
+  for (var i = 0; i < opts.length; i++) opts[i].className = "opt";
+  var cards = document.querySelectorAll(".qcard");
+  for (var i = 0; i < cards.length; i++) cards[i].className = "qcard";
+  var bds = document.querySelectorAll(".skbdg");
+  for (var i = 0; i < bds.length; i++) { bds[i].className = "skbdg"; bds[i].innerHTML = ""; }
+  clearInterval(tInt);
+  startTimer();
+  window.scrollTo(0,0);
+}
+
+document.getElementById("btnMulai").onclick = function() {
+  document.getElementById("startScreen").style.display = "none";
+  document.getElementById("mainContent").style.display = "block";
+  startTimer();
+  window.scrollTo(0,0);
+};
+document.getElementById("btnOv").onclick = function() {
+  document.getElementById("overlay").className = "overlay";
+  showResult();
+};
+document.getElementById("btnSub").onclick = doSubmit;
+document.getElementById("btnRev").onclick = doReview;
+document.getElementById("btnRst").onclick = doReset;
+</script>
+</body>
+</html>
